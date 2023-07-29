@@ -1,0 +1,177 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>4 Milyon Veri</title>
+
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="description" content="" />
+    <meta name="keywords" content="">
+    <meta name="author" content="Phoenixcoded" />
+    <!-- Favicon icon -->
+    <link rel="icon" href="~/flat-able-lite/dist/assets/images/favicon.ico" type="image/x-icon">
+
+    <!-- vendor css -->
+    <link rel="stylesheet" href="~/flat-able-lite/dist/assets/css/style.css">
+
+
+
+</head>
+<body class="">
+    <!-- [ Pre-loader ] start -->
+    <div class="loader-bg">
+        <div class="loader-track">
+            <div class="loader-fill"></div>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <div class="col-xl-12">
+            <h5 class="mt-4">4 Milyon Plaka Verisi</h5>
+            <hr>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="card text-white bg-primary ">
+                        <h5 class="card-header text-white">En Fazla Olan Plaka</h5>
+                        <div class="card-body">
+                            <h5 class="card-title text-white">@ViewData["plateMax"] -- @ViewData["countMax"]</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="card text-white bg-success ">
+                        <h5 class="card-header text-white">En Az Olan Plaka</h5>
+                        <div class="card-body">
+                            <h5 class="card-title text-white">@ViewData["plateMin"] -- @ViewData["countMin"]</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="card text-white bg-warning ">
+                        <h5 class="card-header text-white">En Çok Tercih Edilen Vites Türü</h5>
+                        <div class="card-body">
+                            <h5 class="card-title text-white">@ViewData["shiftType"] -- @ViewData["shiftTypeCount"]</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="card text-white bg-secondary ">
+                        <h5 class="card-header text-white">En Fazla Olan Araç Markası</h5>
+                        <div class="card-body">
+                            <h5 class="card-title text-white">@ViewData["brandMax"] -- @ViewData["countMax"] adet</h5>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-4">
+                    <div class="card text-white bg-danger ">
+                        <h5 class="card-header text-white">En Az Olan Araç Markası</h5>
+                        <div class="card-body">
+                            <h5 class="card-title text-white">@ViewData["brandMin"] -- @ViewData["countMin"] adet</h5>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-4">
+                    <div class="card text-white bg-info ">
+                        <h5 class="card-header text-white">En Fazla Tercih Edilen Yakıt Türü</h5>
+                        <div class="card-body">
+                            <h5 class="card-title text-white">@ViewData["fuelType"] -- @ViewData["fuelTypeCount"]</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @*<div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Ara" aria-label="Recipient's username" aria-describedby="basic-addon2">
+            <div class="input-group-append">
+            <button class="btn  btn-primary" type="button">Button</button>
+            </div>
+            </div>*@
+
+
+            <div class="input-group mb-3">
+                <form method="post" id="searchForm">
+                    <input type="text" name="keyword" class="form-control" placeholder="Ara" aria-label="Recipient's username" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="submit">Ara</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="searchResult">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Marka</th>
+                            <th>Plaka</th>
+                            <th>Vites Türü</th>
+                            <th>Yakıt Tipi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <var searchResultTable=document.getElementById("searchResult").getElementsByTagName("tbody")[0];
+                             searchResultTable.innerHTML="" ;
+                    </tbody>
+                </table>
+            </div>
+            
+
+        </div>
+
+
+    </div>
+
+
+    
+    <!-- Required Js -->
+    <script src="~/flat-able-lite/dist/assets/js/vendor-all.min.js"></script>
+    <script src="~/flat-able-lite/dist/assets/js/plugins/bootstrap.min.js"></script>
+    <script src="~/flat-able-lite/dist/assets/js/pcoded.min.js"></script>
+
+    <!-- Apex Chart -->
+    <script src="~/flat-able-lite/dist/assets/js/plugins/apexcharts.min.js"></script>
+
+
+    <!-- custom-chart js -->
+    <script src="~/flat-able-lite/dist/assets/js/pages/dashboard-main.js"></script>
+
+
+    <script>
+        document.getElementById("searchForm").addEventListener("submit", function (event) {
+            event.preventDefault(); // Formun submit olayını engelle
+
+            var searchKeyword = document.getElementsByName("keyword")[0].value;
+            // Send the search keyword to the server using AJAX
+            fetch(`/Default/Search?keyword=${encodeURIComponent(searchKeyword)}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data); // JSON verilerini konsolda göster
+                    // Display search results in the table
+                    var searchResultTable = document.getElementById("searchResult").getElementsByTagName("tbody")[0];
+                    searchResultTable.innerHTML = "";
+                    data.forEach(item => {
+                        var row = searchResultTable.insertRow();
+                        row.insertCell().innerText = item.brand;
+                        row.insertCell().innerText = item.plateprefix;
+                        row.insertCell().innerText = item.shifttype;
+                        row.insertCell().innerText = item.fuel;
+                    });
+                });
+        });
+    </script>
+
+
+
+</body>
+
+</html>
+
